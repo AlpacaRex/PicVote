@@ -15,12 +15,12 @@ Including another URLconf
 """
 
 from wxcloudrun import views
-from django.conf.urls import url
+from django.urls import re_path, include
 
 urlpatterns = (
     # 计数器接口
-    url(r'^^api/count(/)?$', views.counter),
+    re_path(r'^^api/count(/)?$', views.counter),
 
     # 获取主页
-    url(r'(/)?$', views.index),
+    re_path(r'(/)?$', views.index),
 )
