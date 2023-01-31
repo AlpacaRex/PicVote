@@ -3,4 +3,4 @@ from django.db import models
 
 # Create your models here.
 class User(models.Model):
-    models.CharField(max_length=100)
+    openid = models.CharField(max_length=50, primary_key=True)
