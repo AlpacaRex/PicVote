@@ -1,7 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import ListModelMixin, CreateModelMixin
 from vote.models import Voting, User
 from vote.serializers import VotingSerializer
 
@@ -20,14 +19,15 @@ class VotingView(GenericViewSet):
 
     def create(self, request):
         openid = request.headers.get('openid')
+        print(openid)
         if not User.objects.filter(pk=openid):
-            user = User.objects.create(pk=openid)
-        else:
-            user = User.objects.get(pk=openid)
-        data = request.data
-
+            User.objects.create(pk=openid)
+        data = request.data.dict()
+        data['user'] = openid
         serializer = self.get_serializer(data=data)
-        serializer.is_valid()
+        if serializer.is_valid():
+            serializer.save()
+        return Response(serializer.data)
 
 
 

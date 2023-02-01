@@ -8,5 +8,6 @@ router.register('voting', VotingView, basename='voting')
 
 urlpatterns = [
     path('login/', LoginView.as_view()),
-    path('^', include(router.urls))
 ]
+
+urlpatterns += router.urls
