@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import RetrieveModelMixin
 from vote.models import Voting, User
 from vote.serializers import VotingSerializer, VotingListSerializer
 
@@ -13,7 +14,7 @@ class UserView(APIView):
         return Response(VotingListSerializer(instance=votings, many=True).data)
 
 
-class VotingView(GenericViewSet):
+class VotingView(RetrieveModelMixin, GenericViewSet):
 
     queryset = Voting.objects.all()
     serializer_class = VotingSerializer
