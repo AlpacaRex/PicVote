@@ -6,11 +6,11 @@ from vote.serializers import VotingSerializer, VotingListSerializer
 
 
 class UserView(APIView):
-    def post(self, request):
+    def get(self, request):
         openid = request.headers.get('x-wx-openid')
         user = User.objects.get(openid=openid)
         votings = Voting.objects.filter(user=user)
-        return Response(VotingListSerializer(instance=votings, many=True))
+        return Response(VotingListSerializer(instance=votings, many=True).data)
 
 
 class VotingView(GenericViewSet):

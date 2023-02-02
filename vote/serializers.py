@@ -5,7 +5,7 @@ from vote.models import *
 class VotingListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Voting
-        fields = 'title'
+        fields = ('id', 'title',)
 
 
 class VotingSerializer(serializers.ModelSerializer):
