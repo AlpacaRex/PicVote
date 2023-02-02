@@ -2,14 +2,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from vote.models import Voting, User
-from vote.serializers import VotingSerializer
+from vote.serializers import VotingSerializer, VotingListSerializer
 
 
-class LoginView(APIView):
+class UserView(APIView):
     def post(self, request):
-        code = request.data.get('code')
-
-        return Response({'msg': 'nmsl'})
+        openid = request.headers.get('x-wx-openid')
+        user = User.objects.get(openid=openid)
+        votings = Voting.objects.filter(user=user)
+        return Response(VotingListSerializer(instance=votings, many=True))
 
 
 class VotingView(GenericViewSet):
@@ -18,11 +19,10 @@ class VotingView(GenericViewSet):
     serializer_class = VotingSerializer
 
     def create(self, request):
-        openid = request.headers.get('openid')
-        print(openid)
+        openid = request.headers.get('x-wx-openid')
         if not User.objects.filter(pk=openid):
             User.objects.create(pk=openid)
-        data = request.data.dict()
+        data = request.data
         data['user'] = openid
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
