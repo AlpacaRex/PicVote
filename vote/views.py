@@ -30,8 +30,5 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
             serializer.save()
         return Response(serializer.data)
 
-
-
-
-
-
+    def list(self, request):
+        return Response({'num': len(self.get_queryset())})
