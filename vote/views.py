@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin
-from vote.models import Voting, User
+from vote.models import Voting, User, VotingItem
 from vote.serializers import VotingSerializer, VotingListSerializer
 
 
@@ -27,7 +27,9 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
         data['user'] = openid
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            voting = serializer.save()
+            for i in range(1, data['item_num']):
+                VotingItem.objects.create(voting=voting, order=i)
         return Response(serializer.data)
 
     def list(self, request):
