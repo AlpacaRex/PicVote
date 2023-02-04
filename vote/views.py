@@ -9,6 +9,8 @@ from vote.serializers import VotingSerializer, VotingListSerializer
 class UserView(APIView):
     def get(self, request):
         openid = request.headers.get('x-wx-openid')
+        if not User.objects.filter(openid=openid).exists():
+            return Response([])
         user = User.objects.get(openid=openid)
         votings = Voting.objects.filter(user=user)
         if votings.exists():
@@ -24,7 +26,7 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
 
     def create(self, request):
         openid = request.headers.get('x-wx-openid')
-        if not User.objects.filter(pk=openid):
+        if not User.objects.filter(pk=openid).exists():
             User.objects.create(pk=openid)
         data = request.data
         data['user'] = openid
