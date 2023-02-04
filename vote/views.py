@@ -11,7 +11,10 @@ class UserView(APIView):
         openid = request.headers.get('x-wx-openid')
         user = User.objects.get(openid=openid)
         votings = Voting.objects.filter(user=user)
-        return Response(VotingListSerializer(instance=votings, many=True).data)
+        if votings.exists():
+            return Response(VotingListSerializer(instance=votings, many=True).data)
+        else:
+            return Response([])
 
 
 class VotingView(RetrieveModelMixin, GenericViewSet):
