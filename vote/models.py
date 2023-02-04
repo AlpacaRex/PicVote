@@ -14,6 +14,7 @@ class Voting(models.Model):
 
 
 class VotingItem(models.Model):
+    fileID = models.CharField(max_length=100)
     voting = models.ForeignKey(Voting, on_delete=models.CASCADE, related_name='items')
     order = models.IntegerField()
     num = models.IntegerField(default=0)

@@ -33,8 +33,8 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             voting = serializer.save()
-            for i in range(1, data['item_num']):
-                VotingItem.objects.create(voting=voting, order=i)
+            for index, item in enumerate(data['file_list']):
+                VotingItem.objects.create(fileID=item['fileID'], voting=voting, order=index+1)
         return Response(serializer.data)
 
     def list(self, request):
