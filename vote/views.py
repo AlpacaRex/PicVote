@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import RetrieveModelMixin
 from vote.models import Voting, User, VotingItem
-from vote.serializers import VotingSerializer, VotingListSerializer
+from vote.serializers import VotingSerializer, VotingListSerializer, VotingItemSerializer
 
 
 class UserView(APIView):
@@ -32,10 +32,18 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
         data['user'] = openid
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
-            voting = serializer.save()
-            for index, item in enumerate(data['file_list']):
-                VotingItem.objects.create(fileID=item['fileID'], voting=voting, order=index+1)
+            serializer.save()
         return Response(serializer.data)
 
     def list(self, request):
         return Response({'num': len(self.get_queryset())})
+
+
+class VotingItemView(GenericViewSet):
+    serializer_class = VotingItemSerializer
+
+    def create(self, request):
+        voting = Voting.objects.get(pk=request.data['voting_id'])
+        for index, item in enumerate(request.data['file_list']):
+            VotingItem.objects.create(fileID=item['fileID'], voting=voting, order=index + 1)
+        return Response({'msg': 'successfully created'})

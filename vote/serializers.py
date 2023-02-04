@@ -3,6 +3,7 @@ from vote.models import *
 
 
 class VotingItemSerializer(serializers.ModelSerializer):
+    num = serializers.IntegerField(required=False)
 
     class Meta:
         model = VotingItem
