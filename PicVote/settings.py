@@ -223,5 +223,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGS_DIR = '/data/logs/'
 
 REST_FRAMEWORK = {
-    'DATETIME_FORMAT': '%Y-%m-%d, %H:%M:%S'
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M'
 }
