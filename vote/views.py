@@ -47,3 +47,8 @@ class VotingItemView(GenericViewSet):
         for index, item in enumerate(request.data['file_list']):
             VotingItem.objects.create(fileID=item['fileID'], voting=voting, order=index + 1)
         return Response({'msg': 'successfully created'})
+
+    def update(self, request, pk):
+        voting_item = VotingItem.objects.get(pk=pk)
+        voting_item.num += 1
+        return Response(self.get_serializer(instance=voting_item).data)
