@@ -51,4 +51,5 @@ class VotingItemView(GenericViewSet):
     def update(self, request, pk):
         voting_item = VotingItem.objects.get(pk=pk)
         voting_item.num += 1
+        voting_item.save()
         return Response(self.get_serializer(instance=voting_item).data)
