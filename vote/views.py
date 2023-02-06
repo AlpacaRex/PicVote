@@ -57,7 +57,7 @@ class VotingItemView(GenericViewSet):
 
 class QRCodeView(APIView):
 
-    def get(self, request):
+    def post(self, request):
         response = requests.post(
             url='https://api.weixin.qq.com/wxa/getwxacodeunlimit',
             data={
