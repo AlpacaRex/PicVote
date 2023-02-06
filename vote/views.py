@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin
 from vote.models import Voting, User, VotingItem
 from vote.serializers import VotingSerializer, VotingListSerializer, VotingItemSerializer
 import requests
@@ -20,7 +20,7 @@ class UserView(APIView):
             return Response([])
 
 
-class VotingView(RetrieveModelMixin, GenericViewSet):
+class VotingView(RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
     queryset = Voting.objects.all()
     serializer_class = VotingSerializer
 
@@ -59,7 +59,7 @@ class QRCodeView(APIView):
 
     def post(self, request):
         response = requests.post(
-            url='https://api.weixin.qq.com/wxa/getwxacodeunlimit',
+            url='http://api.weixin.qq.com/wxa/getwxacodeunlimit',
             data={
                 'page': 'pages/vote/vote',
                 'scene': 'id=%d' % request.data.get('id'),
