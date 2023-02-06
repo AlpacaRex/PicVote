@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin
 from vote.models import Voting, User, VotingItem
 from vote.serializers import VotingSerializer, VotingListSerializer, VotingItemSerializer
 import requests
@@ -38,8 +38,9 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
     def list(self, request):
         return Response({'num': len(self.get_queryset())})
 
-    def delete(self, request, pk):
-        self.get_queryset().get(pk=pk).delete()
+    def delete(self, request):
+        for voting_id in request.data.get('voting_id_list'):
+            self.get_queryset().get(pk=voting_id).delete()
         votings = Voting.objects.filter(user_id=request.headers.get('x-wx-openid'))
         if votings.exists():
             return Response(VotingListSerializer(instance=votings, many=True).data)
