@@ -40,7 +40,11 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
 
     def delete(self, request, pk):
         self.get_queryset().get(pk=pk).delete()
-        return Response(self.get_serializer(self.get_queryset().filter(user=request.headers.get('x-wx-openid'))).data)
+        votings = Voting.objects.filter(user_id=request.headers.get('x-wx-openid'))
+        if votings.exists():
+            return Response(VotingListSerializer(instance=votings, many=True).data)
+        else:
+            return Response([])
 
 
 class VotingItemView(GenericViewSet):
@@ -56,7 +60,7 @@ class VotingItemView(GenericViewSet):
         voting_item = VotingItem.objects.get(pk=pk)
         voting_item.num += 1
         voting_item.save()
-        return Response(self.get_serializer(instance=voting_item).data)
+        return Response(VotingListSerializer(instance=voting_item, many=True).data)
 
 
 class QRCodeView(APIView):
