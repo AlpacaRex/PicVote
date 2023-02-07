@@ -78,9 +78,9 @@ class QRCodeView(APIView):
         return Response(response.json())
 
 
-class DeleteVotingView(APIView):
+class DeleteVotingView(GenericViewSet):
 
-    def get(self, request):
+    def list(self, request):
         voting_item_list = []
         for voting_id in request.data.get('voting_id_list'):
             voting_item_list.append(VotingItem.objects.filter(voting_id=voting_id))
