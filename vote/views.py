@@ -76,3 +76,23 @@ class QRCodeView(APIView):
             }
         )
         return Response(response.json())
+
+
+class DeleteVotingView(APIView):
+
+    def get(self, request):
+        voting_item_list = []
+        for voting_id in request.data.get('voting_id_list'):
+            voting_item_list.append(VotingItem.objects.filter(voting_id=voting_id))
+        return Response(VotingListSerializer(instance=voting_item_list, many=True).data)
+
+    def delete(self, request):
+        voting_item_list = []
+        for voting_id in request.data.get("voting_id_list"):
+            VotingItem.objects.filter(voting_id=voting_id).delete()
+        votings = Voting.objects.filter(user_id=request.headers.get('x-wx-openid'))
+        if votings.exists():
+            return Response(VotingListSerializer(instance=votings, many=True).data)
+        else:
+            return Response([])
+
