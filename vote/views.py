@@ -5,6 +5,7 @@ from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin
 from vote.models import Voting, User, VotingItem
 from vote.serializers import VotingSerializer, VotingListSerializer, VotingItemSerializer
 import requests
+import base64
 
 
 class UserView(APIView):
@@ -75,7 +76,7 @@ class QRCodeView(APIView):
                 'env_version': 'develop'
             }
         )
-        return Response(response.content)
+        return Response({'base64': base64.b64encode(response.content)})
 
 
 class DeleteVotingView(APIView):
