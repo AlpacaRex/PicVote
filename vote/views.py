@@ -69,13 +69,13 @@ class QRCodeView(APIView):
     def post(self, request):
         response = requests.post(
             url='http://api.weixin.qq.com/wxa/getwxacodeunlimit',
-            data={
+            json={
                 'page': 'pages/vote/vote',
                 'scene': 'id=%d' % request.data.get('id'),
                 'env_version': 'develop'
             }
         )
-        return Response(response.json())
+        return Response(response.content)
 
 
 class DeleteVotingView(APIView):
@@ -88,7 +88,7 @@ class DeleteVotingView(APIView):
         Voting.objects.filter(id__in=request.data.get('voting_id')).delete()
         votings = Voting.objects.filter(user_id=request.headers.get('x-wx-openid'))
         if votings.exists():
-            return Response(VotingItemSerializer(instance=votings, many=True).data)
+            return Response(VotingListSerializer(instance=votings, many=True).data)
         else:
             return Response([])
 
