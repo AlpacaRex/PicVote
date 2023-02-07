@@ -82,14 +82,13 @@ class DeleteVotingView(APIView):
 
     def post(self, request):
         voting_items = VotingItem.objects.filter(voting_id__in=request.data.get('voting_id'))
-        return Response(VotingListSerializer(instance=voting_items, many=True).data)
+        return Response(VotingItemSerializer(instance=voting_items, many=True).data)
 
     def delete(self, request):
-        for voting_id in request.data.get("voting_id_list"):
-            VotingItem.objects.filter(voting_id=voting_id).delete()
+        Voting.objects.filter(id__in=request.data.get('voting_id')).delete()
         votings = Voting.objects.filter(user_id=request.headers.get('x-wx-openid'))
         if votings.exists():
-            return Response(VotingListSerializer(instance=votings, many=True).data)
+            return Response(VotingItemSerializer(instance=votings, many=True).data)
         else:
             return Response([])
 
