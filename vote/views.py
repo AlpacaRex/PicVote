@@ -1,3 +1,5 @@
+from django.db.models import F
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -59,10 +61,9 @@ class VotingItemView(GenericViewSet):
         return Response({'msg': 'successfully created'})
 
     def update(self, request, pk):
-        voting_item = VotingItem.objects.get(pk=pk)
-        voting_item.num += 1
-        voting_item.save()
-        return Response(VotingListSerializer(instance=voting_item, many=True).data)
+        voting_item = VotingItem.objects.filter(name='Tintin')
+        voting_item.update(num=F('num') + 1)
+        return Response(VotingItemSerializer(instance=voting_item).data)
 
 
 class QRCodeView(APIView):
@@ -71,12 +72,12 @@ class QRCodeView(APIView):
         response = requests.post(
             url='http://api.weixin.qq.com/wxa/getwxacodeunlimit',
             json={
-                'page': 'pages/vote/vote',
-                'scene': 'id=%d' % request.data.get('id'),
+                # 'page': 'pages/vote/vote',
+                'scene': 'id=' + str(request.data.get('id')),
                 'env_version': 'develop'
             }
         )
-        return Response({'base64': base64.b64encode(response.content)})
+        return HttpResponse(base64.b64encode(response.content))
 
 
 class DeleteVotingView(APIView):
