@@ -61,8 +61,9 @@ class VotingItemView(GenericViewSet):
         return Response({'msg': 'successfully created'})
 
     def update(self, request, pk):
-        voting_item = VotingItem.objects.filter(name='Tintin')
-        voting_item.update(num=F('num') + 1)
+        voting_item = VotingItem.objects.get(pk=pk)
+        voting_item.num = voting_item.num + 1
+        voting_item.save()
         return Response(VotingItemSerializer(instance=voting_item).data)
 
 

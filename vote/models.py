@@ -9,8 +9,10 @@ class User(models.Model):
 class Voting(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
-    description = models.TextField()
+    description = models.TextField(default='')
     date_created = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateTimeField(auto_now_add=True)
+    history = models.ManyToManyField(User)
 
 
 class VotingItem(models.Model):
