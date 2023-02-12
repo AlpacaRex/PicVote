@@ -1,9 +1,10 @@
 from django.urls import path, include
 from rest_framework import routers
-from vote.views import UserView, VotingView, VotingItemView, QRCodeView, DeleteVotingView
+from vote.views import UserView, VotingDetailView, VotingItemView, QRCodeView, DeleteVotingView, VoteView
 
 router = routers.DefaultRouter()
-router.register('voting', VotingView, basename='voting')
+router.register('voting', VotingDetailView, basename='voting')
+router.register('vote', VoteView, basename='vote')
 router.register('votingItem', VotingItemView, basename='votingItem')
 
 urlpatterns = [

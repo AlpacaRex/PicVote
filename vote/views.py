@@ -1,11 +1,10 @@
 from datetime import datetime
 
-from django.db.models import F
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import RetrieveModelMixin, DestroyModelMixin
+from rest_framework.mixins import RetrieveModelMixin
 from vote.models import Voting, User, VotingItem
 from vote.serializers import VotingSerializer, VotingListSerializer, VotingItemSerializer
 import requests
@@ -25,7 +24,21 @@ class UserView(APIView):
             return Response([])
 
 
-class VotingView(GenericViewSet):
+class VoteView(GenericViewSet):
+    queryset = Voting.objects.all()
+    serializer_class = VotingSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.deadline < datetime.now():
+            return Response({'errmsg': '投票已截止'})
+        elif request.headers.get('x-wx-openid') in instance.history:
+            return Response({'errcode': '已参与过投票'})
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+
+class VotingDetailView(RetrieveModelMixin , GenericViewSet):
     queryset = Voting.objects.all()
     serializer_class = VotingSerializer
 
@@ -43,14 +56,6 @@ class VotingView(GenericViewSet):
     def list(self, request):
         return Response({'num': len(self.get_queryset())})
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if instance.deadline < datetime.now():
-            return Response({'errmsg': '投票已截止'})
-        elif request.headers.get('x-wx-openid') in instance.history:
-            return Response({'errcode': '已参与过投票'})
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
 
 
     def delete(self, request):
