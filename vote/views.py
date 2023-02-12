@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import F
 from django.http import HttpResponse
 from rest_framework.response import Response
@@ -23,7 +25,7 @@ class UserView(APIView):
             return Response([])
 
 
-class VotingView(RetrieveModelMixin, GenericViewSet):
+class VotingView(GenericViewSet):
     queryset = Voting.objects.all()
     serializer_class = VotingSerializer
 
@@ -40,6 +42,16 @@ class VotingView(RetrieveModelMixin, GenericViewSet):
 
     def list(self, request):
         return Response({'num': len(self.get_queryset())})
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.deadline < datetime.now():
+            return Response({'errmsg': '投票已截止'})
+        elif request.headers.get('x-wx-openid') in instance.history:
+            return Response({'errcode': '已参与过投票'})
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
     def delete(self, request):
         for voting_id in request.data.get('voting_id_list'):
