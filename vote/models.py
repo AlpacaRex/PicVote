@@ -11,8 +11,6 @@ class Voting(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(default='')
     date_created = models.DateTimeField(auto_now_add=True)
-    deadline = models.DateTimeField(auto_now_add=True)
-    history = models.ManyToManyField(User)
 
 
 class VotingItem(models.Model):
