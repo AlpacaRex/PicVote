@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 
@@ -11,6 +13,8 @@ class Voting(models.Model):
     title = models.CharField(max_length=50)
     description = models.TextField(default='')
     date_created = models.DateTimeField(auto_now_add=True)
+    deadline = models.DateTimeField(default=datetime.date.today() + datetime.timedelta(days=1))
+    history = models.ManyToManyField(User)
 
 
 class VotingItem(models.Model):
