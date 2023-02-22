@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models import F
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -36,6 +37,12 @@ class VoteView(GenericViewSet):
             return Response({'errmsg': '已参与过投票'})
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
+
+    def post(self, request):
+        voting_items = VotingItem.objects.filter(id__in=request.data.get('voting_items'))
+        voting_items.update(num=F('num') + 1)
+        return Response({'msg': 'successfully voted'})
+
 
 
 class VotingDetailView(RetrieveModelMixin , GenericViewSet):
@@ -74,7 +81,13 @@ class VotingItemView(GenericViewSet):
     def create(self, request):
         voting = Voting.objects.get(pk=request.data['voting_id'])
         for index, item in enumerate(request.data['file_list']):
-            VotingItem.objects.create(fileID=item['fileID'], voting=voting, order=index + 1)
+            VotingItem.objects.create(
+                fileID=item['fileID'],
+                voting=voting,
+                order=index + 1,
+                title=item['title'],
+                description=item['description']
+            )
         return Response({'msg': 'successfully created'})
 
     def update(self, request, pk):
