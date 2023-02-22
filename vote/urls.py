@@ -5,12 +5,12 @@ from vote.views import UserView, VotingDetailView, VotingItemView, QRCodeView, D
 router = routers.DefaultRouter()
 router.register('voting', VotingDetailView, basename='voting')
 router.register('vote', VoteView, basename='vote')
-router.register('votingItem', VotingItemView, basename='votingItem')
 
 urlpatterns = [
     path('user/', UserView.as_view()),
     path('qrcode/', QRCodeView.as_view()),
-    path('deleteVoting/', DeleteVotingView.as_view())
+    path('deleteVoting/', DeleteVotingView.as_view()),
+    path('votingItem/', VotingItemView.as_view({'post': 'create', 'put': 'list_update'}))
 ]
 
 urlpatterns += router.urls

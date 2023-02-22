@@ -38,12 +38,6 @@ class VoteView(GenericViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    def post(self, request):
-        voting_items = VotingItem.objects.filter(id__in=request.data.get('voting_items'))
-        voting_items.update(num=F('num') + 1)
-        return Response({'msg': 'successfully voted'})
-
-
 
 class VotingDetailView(RetrieveModelMixin , GenericViewSet):
     queryset = Voting.objects.all()
@@ -90,13 +84,13 @@ class VotingItemView(GenericViewSet):
             )
         return Response({'msg': 'successfully created'})
 
-    def update(self, request, pk):
-        voting_item = VotingItem.objects.get(pk=pk)
-        voting_item.num = voting_item.num + 1
+    def list_update(self, request):
+        voting_items = VotingItem.objects.filter(pk__in=request.data.get('voting_items'))
+        voting_items.update(num=F('num')+1)
         user = User.objects.get_or_create(pk=request.headers.get('x-wx-openid'))
-        voting_item.voting.history.add(user)
-        voting_item.save()
-        return Response(VotingItemSerializer(instance=voting_item).data)
+        voting_items.voting.history.add(user)
+        voting_items.save()
+        return Response({'msg': 'successfully updated'})
 
 
 class QRCodeView(APIView):
