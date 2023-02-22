@@ -32,8 +32,8 @@ class VoteView(GenericViewSet):
         instance = self.get_object()
         if instance.deadline < datetime.now():
             return Response({'errmsg': '投票已截止'})
-        elif request.headers.get('x-wx-openid') in instance.history:
-            return Response({'errcode': '已参与过投票'})
+        elif instance.history.filter(pk=request.headers.get('x-wx-openid')).exists():
+            return Response({'errmsg': '已参与过投票'})
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
@@ -80,6 +80,8 @@ class VotingItemView(GenericViewSet):
     def update(self, request, pk):
         voting_item = VotingItem.objects.get(pk=pk)
         voting_item.num = voting_item.num + 1
+        user = User.objects.get_or_create(pk=request.headers.get('x-wx-openid'))
+        voting_item.voting.history.add(user)
         voting_item.save()
         return Response(VotingItemSerializer(instance=voting_item).data)
 
@@ -90,9 +92,9 @@ class QRCodeView(APIView):
         response = requests.post(
             url='http://api.weixin.qq.com/wxa/getwxacodeunlimit',
             json={
-                # 'page': 'pages/vote/vote',
-                'scene': 'id=' + str(request.data.get('id')),
-                'env_version': 'develop'
+                'page': 'pages/vote/vote',
+                'scene': str(request.data.get('id')),
+                'check_path': False,
             }
         )
         return HttpResponse(base64.b64encode(response.content))
