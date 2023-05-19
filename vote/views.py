@@ -87,9 +87,8 @@ class VotingItemView(GenericViewSet):
     def list_update(self, request):
         voting_items = VotingItem.objects.filter(pk__in=request.data.get('voting_items'))
         voting_items.update(num=F('num')+1)
-        user = User.objects.get_or_create(pk=request.headers.get('x-wx-openid'))
-        voting_items.voting.history.add(user)
-        voting_items.save()
+        user, b = User.objects.get_or_create(pk=request.headers.get('x-wx-openid'))
+        voting_items[0].voting.history.add(user)
         return Response({'msg': 'successfully updated'})
 
 
