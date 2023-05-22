@@ -52,12 +52,12 @@ class VotingDetailView(RetrieveModelMixin , GenericViewSet):
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             serializer.save()
+        else:
+            print(serializer.errors)
         return Response(serializer.data)
 
     def list(self, request):
         return Response({'num': len(self.get_queryset())})
-
-
 
     def delete(self, request):
         for voting_id in request.data.get('voting_id_list'):
