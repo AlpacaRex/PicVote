@@ -11,7 +11,7 @@ class User(models.Model):
 class Voting(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
-    description = models.TextField(default='')
+    description = models.TextField(default='', null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     deadline = models.DateTimeField(default=datetime.date.today() + datetime.timedelta(days=1))
     max_choices = models.IntegerField(default=1)
