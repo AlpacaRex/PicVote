@@ -88,7 +88,7 @@ class VotingItemView(GenericViewSet):
         voting_items = VotingItem.objects.filter(voting_id=request.data.get('voting_id'))
         voting_items.filter(order__in=request.data.get('first_prize')).update(first_prize=F('first_prize')+1)
         voting_items.filter(order__in=request.data.get('second_prize')).update(second_prize=F('second_prize')+1)
-        voting_items.filter(order__in=request.data.get('third_prize')).update(second_prize=F('second_prize')+1)
+        voting_items.filter(order__in=request.data.get('third_prize')).update(second_prize=F('third_prize')+1)
         user, b = User.objects.get_or_create(pk=request.headers.get('x-wx-openid'))
         voting_items[0].voting.history.add(user)
         return Response({'msg': 'successfully updated'})
