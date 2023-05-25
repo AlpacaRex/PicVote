@@ -22,7 +22,9 @@ class VotingItem(models.Model):
     fileID = models.CharField(max_length=100)
     voting = models.ForeignKey(Voting, on_delete=models.CASCADE, related_name='items')
     order = models.IntegerField()
-    num = models.IntegerField(default=0)
+    first_prize = models.IntegerField(default=0)
+    second_prize = models.IntegerField(default=0)
+    third_prize = models.IntegerField(default=0)
     title = models.CharField(max_length=50, default='')
     description = models.CharField(max_length=250, default='')
 

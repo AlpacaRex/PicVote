@@ -5,7 +5,9 @@ from vote.models import *
 
 
 class VotingItemSerializer(serializers.ModelSerializer):
-    num = serializers.IntegerField(required=False)
+    first_prize = serializers.IntegerField(required=False)
+    second_prize = serializers.IntegerField(required=False)
+    third_prize = serializers.IntegerField(required=False)
 
     class Meta:
         model = VotingItem
